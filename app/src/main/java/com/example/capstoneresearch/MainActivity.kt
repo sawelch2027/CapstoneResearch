@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,12 +44,13 @@ class MainActivity : ComponentActivity() {
             }
 
             // Screen layout with Header, Map, and Footer
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
                 
                 // HEADER
                 Text(
-                    text = "Drop a Marker",
+                    text = "DropaMarker",
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    color = Color.Black,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
@@ -106,8 +109,9 @@ class MainActivity : ComponentActivity() {
 
                 // FOOTER
                 Text(
-                    text = "Drop a Marker",
+                    text = "DropaMarker",
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    color = Color.Black,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge
                 )
