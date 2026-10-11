@@ -1,6 +1,7 @@
 package com.example.capstoneresearch
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -15,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,21 +26,29 @@ import org.maplibre.android.annotations.MarkerOptions
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.location.LocationComponentActivationOptions
+import org.maplibre.android.location.modes.CameraMode
+import org.maplibre.android.location.modes.RenderMode
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         MapLibre.getInstance(this)
 
         setContent {
+            val ctx = LocalContext.current
             var myMap by remember { mutableStateOf<MapLibreMap?>(null) }
+            var hasLocation by remember { mutableStateOf(false) }
 
             // Ask for location permission on startup
-            val permReq = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+            val permReq = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                hasLocation = granted
+            }
             LaunchedEffect(Unit) {
                 permReq.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
@@ -46,21 +56,42 @@ class MainActivity : ComponentActivity() {
             // Screen layout with Header, Map, and Footer
             Column(modifier = Modifier.fillMaxSize().background(Color.White)) {
                 
-                // HEADER
-                Text(
-                    text = "DropaMarker",
+                // HEADER (Added a "Locate Me" tracking button for the Waze feel!)
+                Row(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "DropaMarker",
+                        color = Color.Black,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    Button(onClick = {
+                        if (hasLocation) {
+                            myMap?.style?.let { style ->
+                                val locComponent = myMap!!.locationComponent
+                                val options = LocationComponentActivationOptions.builder(ctx, style).build()
+                                locComponent.activateLocationComponent(options)
+                                locComponent.isLocationComponentEnabled = true
+                                locComponent.cameraMode = CameraMode.TRACKING
+                                locComponent.renderMode = RenderMode.COMPASS
+                            }
+                        } else {
+                            permReq.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                        }
+                    }) {
+                        Text("Locate Me")
+                    }
+                }
 
                 // MAP AREA (Takes up remaining space)
                 Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
                     AndroidView(
-                        factory = { ctx ->
-                            MapView(ctx).apply {
+                        factory = { context ->
+                            MapView(context).apply {
                                 getMapAsync { map ->
                                     myMap = map
                                     
@@ -74,7 +105,8 @@ class MainActivity : ComponentActivity() {
 
                                     // Drop pin
                                     map.addOnMapClickListener { pt ->
-                                        val marker = MarkerOptions().position(pt).title("Pin")
+                                        // A true Waze feature: Categorizing the drop (Pothole!)
+                                        val marker = MarkerOptions().position(pt).title("Reported Pothole")
                                         map.addMarker(marker)
                                         true
                                     }
@@ -116,10 +148,10 @@ class MainActivity : ComponentActivity() {
                     }
                     
                     Button(onClick = { 
-                        // Drop a pin at the center of the map view when clicked
+                        // Drop a Pothole pin at the center crosshair
                         myMap?.let { map ->
                             val centerPoint = map.cameraPosition.target
-                            map.addMarker(MarkerOptions().position(centerPoint).title("Pin"))
+                            map.addMarker(MarkerOptions().position(centerPoint).title("Reported Pothole"))
                         }
                     }) {
                         Text("Marker")
