@@ -1,9 +1,9 @@
 # Capstone Research: Map & Location Services Prototype
 
 ## Project Overview
-This repository contains a minimalist Proof of Concept (POC) Android application built as part of the initial research milestone for a future Waze-like pothole detection app. 
+This repository contains a minimalist Proof of Concept Android application built as part of the initial research milestone for our future pothole detection app. 
 
-The primary goal of this milestone was to individually research and implement the fundamental technologies required for location-based services, specifically focusing on map rendering, GPS location tracking, and interactive marker (pin) management using modern Android development practices.
+The primary goal of this milestone was to research and implement the fundamental technologies required for location-based services, specifically focusing on map rendering, GPS location tracking, and interactive markers using modern Android development practices (Without paying for API).
 
 ## Technologies Used
 * **Language:** Kotlin
