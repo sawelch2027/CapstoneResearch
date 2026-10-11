@@ -93,6 +93,14 @@ class MainActivity : ComponentActivity() {
                         }
                     )
 
+                    // Crosshair in the center of the map
+                    Text(
+                        text = "+",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
 
                 // FOOTER
