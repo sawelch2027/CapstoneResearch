@@ -93,28 +93,34 @@ class MainActivity : ComponentActivity() {
                         }
                     )
 
-                    // Zoom buttons
-                    Column(
-                        modifier = Modifier.align(Alignment.CenterEnd).padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Button(onClick = { myMap?.animateCamera(CameraUpdateFactory.zoomIn()) }) {
-                            Text("Zoom In")
-                        }
-                        Button(onClick = { myMap?.animateCamera(CameraUpdateFactory.zoomOut()) }) {
-                            Text("Zoom Out")
-                        }
-                    }
                 }
 
                 // FOOTER
-                Text(
-                    text = "DropaMarker",
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(onClick = { myMap?.animateCamera(CameraUpdateFactory.zoomOut()) }) {
+                        Text("Zoom Out")
+                    }
+                    
+                    Button(onClick = { 
+                        // Drop a pin at the center of the map view when clicked
+                        myMap?.let { map ->
+                            val centerPoint = map.cameraPosition.target
+                            map.addMarker(MarkerOptions().position(centerPoint).title("Pin"))
+                        }
+                    }) {
+                        Text("Marker")
+                    }
+                    
+                    Button(onClick = { myMap?.animateCamera(CameraUpdateFactory.zoomIn()) }) {
+                        Text("Zoom In")
+                    }
+                }
             }
         }
     }
